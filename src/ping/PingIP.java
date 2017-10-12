@@ -41,23 +41,28 @@ public class PingIP implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
+			int no=0;
 			synchronized (this) {
-				if (ipNum < 25) {
+				if (ipNum < 255) {
 					ipNum++;
-					System.out.println(Thread.currentThread().getId() + "正在ping第" + ipNum + "个ip");
+					no=ipNum;
 				} else {
+//					System.err.println(Thread.currentThread().getId() +"*******ping完IP*******"+ipNum);
 					break;
 				}
 			}
 			try {
 //				Thread.currentThread().sleep((int)(Math.random()*10000));
-				pingIps(ipNum);
+//				System.out.println(Thread.currentThread().getId() + "正在ping第" + no + "个ip");
+				pingIps(no);
+//				System.err.println(Thread.currentThread().getId()+">>>"+no);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
+	int count=0;
 	public void pingIps(int ipno) throws Exception {
 		String IP=ipHead+ipno;
 		Process p = Runtime.getRuntime().exec("ping -n 1 " + IP);
@@ -68,7 +73,8 @@ public class PingIP implements Runnable {
 				sb.append(line);
 			}
 			if (sb.toString().contains("TTL")) {
-				System.out.println("***********" + IP+"************");
+				count++;
+				System.out.println("***********" + IP+"************"+count);
 				ips.add(IP);
 			}
 		} catch (Exception e) {
@@ -76,7 +82,7 @@ public class PingIP implements Runnable {
 		}
 		p.destroy();
 		// ipNum++;
-		System.err.println(Thread.currentThread().getId()+">>>"+IP);
+//		System.err.println(Thread.currentThread().getId()+">>>"+IP);
 
 	}
 
